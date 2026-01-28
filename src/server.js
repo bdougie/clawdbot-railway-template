@@ -57,7 +57,27 @@ function clawArgs(args) {
 }
 
 function configPath() {
-  return process.env.CLAWDBOT_CONFIG_PATH?.trim() || path.join(STATE_DIR, "clawdbot.json");
+  if (process.env.CLAWDBOT_CONFIG_PATH?.trim()) {
+    return process.env.CLAWDBOT_CONFIG_PATH.trim();
+  }
+
+  // Check for both clawdbot.json (older) and moltbot.json (newer)
+  const clawdbotConfig = path.join(STATE_DIR, "clawdbot.json");
+  const moltbotConfig = path.join(STATE_DIR, "moltbot.json");
+
+  try {
+    if (fs.existsSync(moltbotConfig)) {
+      return moltbotConfig;
+    }
+    if (fs.existsSync(clawdbotConfig)) {
+      return clawdbotConfig;
+    }
+  } catch {
+    // ignore
+  }
+
+  // Default to clawdbot.json if neither exists yet
+  return clawdbotConfig;
 }
 
 function isConfigured() {
@@ -117,6 +137,7 @@ async function startGateway() {
       ...process.env,
       CLAWDBOT_STATE_DIR: STATE_DIR,
       CLAWDBOT_WORKSPACE_DIR: WORKSPACE_DIR,
+      CLAWDBOT_CONFIG_PATH: configPath(),
     },
   });
 
@@ -416,6 +437,7 @@ function runCmd(cmd, args, opts = {}) {
         ...process.env,
         CLAWDBOT_STATE_DIR: STATE_DIR,
         CLAWDBOT_WORKSPACE_DIR: WORKSPACE_DIR,
+        CLAWDBOT_CONFIG_PATH: configPath(),
       },
     });
 
