@@ -135,6 +135,7 @@ async function startGateway() {
     stdio: "inherit",
     env: {
       ...process.env,
+      PORT: String(INTERNAL_GATEWAY_PORT),
       CLAWDBOT_STATE_DIR: STATE_DIR,
       CLAWDBOT_WORKSPACE_DIR: WORKSPACE_DIR,
       CLAWDBOT_CONFIG_PATH: configPath(),
@@ -435,6 +436,7 @@ function runCmd(cmd, args, opts = {}) {
       ...opts,
       env: {
         ...process.env,
+        PORT: String(INTERNAL_GATEWAY_PORT),
         CLAWDBOT_STATE_DIR: STATE_DIR,
         CLAWDBOT_WORKSPACE_DIR: WORKSPACE_DIR,
         CLAWDBOT_CONFIG_PATH: configPath(),
