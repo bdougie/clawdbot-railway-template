@@ -131,11 +131,12 @@ async function startGateway() {
     CLAWDBOT_GATEWAY_TOKEN,
   ];
 
+  // Create env without PORT from Railway, so gateway uses only --port argument
+  const { PORT: _omit, ...envWithoutPort } = process.env;
   gatewayProc = childProcess.spawn(CLAWDBOT_NODE, clawArgs(args), {
     stdio: "inherit",
     env: {
-      ...process.env,
-      PORT: String(INTERNAL_GATEWAY_PORT),
+      ...envWithoutPort,
       CLAWDBOT_STATE_DIR: STATE_DIR,
       CLAWDBOT_WORKSPACE_DIR: WORKSPACE_DIR,
       CLAWDBOT_CONFIG_PATH: configPath(),
@@ -432,11 +433,12 @@ function buildOnboardArgs(payload) {
 
 function runCmd(cmd, args, opts = {}) {
   return new Promise((resolve) => {
+    // Create env without PORT from Railway, so clawdbot commands use only CLI arguments
+    const { PORT: _omit, ...envWithoutPort } = process.env;
     const proc = childProcess.spawn(cmd, args, {
       ...opts,
       env: {
-        ...process.env,
-        PORT: String(INTERNAL_GATEWAY_PORT),
+        ...envWithoutPort,
         CLAWDBOT_STATE_DIR: STATE_DIR,
         CLAWDBOT_WORKSPACE_DIR: WORKSPACE_DIR,
         CLAWDBOT_CONFIG_PATH: configPath(),
